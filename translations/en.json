@@ -1,0 +1,48 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Endurain",
+        "description": "Enter your Endurain instance URL and credentials.",
+        "data": {
+          "url": "URL",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to Endurain. Check the URL and network.",
+      "invalid_auth": "Invalid username or password.",
+      "unknown": "Unexpected error. Check the logs."
+    },
+    "abort": {
+      "already_configured": "This Endurain account is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_activity_name": { "name": "Last activity name" },
+      "last_activity_type": { "name": "Last activity type" },
+      "last_activity_distance": { "name": "Last activity distance" },
+      "last_activity_duration": { "name": "Last activity duration" },
+      "last_activity_avg_hr": { "name": "Last activity avg. heart rate" },
+      "last_activity_avg_speed": { "name": "Last activity avg. speed" },
+      "last_activity_elevation_gain": { "name": "Last activity elevation gain" },
+      "last_activity_calories": { "name": "Last activity calories" },
+      "weekly_run_distance": { "name": "Weekly run distance" },
+      "weekly_bike_distance": { "name": "Weekly bike distance" },
+      "weekly_swim_distance": { "name": "Weekly swim distance" },
+      "monthly_run_distance": { "name": "Monthly run distance" },
+      "monthly_bike_distance": { "name": "Monthly bike distance" },
+      "monthly_swim_distance": { "name": "Monthly swim distance" },
+      "weight": { "name": "Weight" },
+      "body_fat": { "name": "Body fat" },
+      "muscle_mass": { "name": "Muscle mass" },
+      "steps": { "name": "Steps" },
+      "sleep_total": { "name": "Sleep duration" },
+      "sleep_score": { "name": "Sleep score" },
+      "resting_heart_rate": { "name": "Resting heart rate" }
+    }
+  }
+}
