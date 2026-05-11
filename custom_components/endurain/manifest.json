@@ -1,10 +1,10 @@
 {
   "domain": "endurain",
   "name": "Endurain",
-  "codeowners": ["@hippolyte-vergnol"],
+  "codeowners": ["@CyberHippo"],
   "config_flow": true,
-  "documentation": "https://github.com/hippolyte-vergnol/endurain-ha",
-  "issue_tracker": "https://github.com/hippolyte-vergnol/endurain-ha/issues",
+  "documentation": "https://github.com/CyberHippo/endurain-ha",
+  "issue_tracker": "https://github.com/CyberHippo/endurain-ha/issues",
   "requirements": ["aiohttp>=3.9.0"],
   "version": "0.1.0",
   "iot_class": "local_polling",
