@@ -8,7 +8,8 @@ import aiohttp
 _LOGGER = logging.getLogger(__name__)
 
 API_PATH = "/api/v1"
-CLIENT_TYPE_HEADER = {"X-Client-Type": "mobile"}
+# Web client: login returns access_token + refresh_token in body directly (no PKCE exchange needed)
+CLIENT_TYPE_HEADER = {"X-Client-Type": "web"}
 
 
 class EndurainAuthError(Exception):
@@ -31,26 +32,28 @@ class EndurainApiClient:
     # ------------------------------------------------------------------
 
     async def authenticate(self, username: str, password: str) -> None:
-        url = f"{self._base}/token"
-        data = {"username": username, "password": password, "grant_type": "password"}
+        url = f"{self._base}/auth/login"
+        data = {"username": username, "password": password}
         try:
             async with self._session.post(
                 url, data=data, headers=CLIENT_TYPE_HEADER
             ) as resp:
-                if resp.status == 401:
+                if resp.status in (401, 403):
                     raise EndurainAuthError("Invalid credentials")
                 resp.raise_for_status()
                 body = await resp.json()
+                # Web login returns access_token directly; refresh token is in a cookie
                 self._access_token = body["access_token"]
-                self._refresh_token = body.get("refresh_token")
+                # Store CSRF token for refresh calls if present
+                self._csrf_token = body.get("csrf_token")
         except aiohttp.ClientConnectionError as err:
             raise EndurainConnectionError(str(err)) from err
 
     async def _refresh(self) -> None:
-        if not self._refresh_token:
-            raise EndurainAuthError("No refresh token available")
-        url = f"{self._base}/refresh"
-        headers = {**CLIENT_TYPE_HEADER, "Authorization": f"Bearer {self._refresh_token}"}
+        url = f"{self._base}/auth/refresh"
+        headers = {**CLIENT_TYPE_HEADER}
+        if self._csrf_token:
+            headers["X-CSRF-Token"] = self._csrf_token
         try:
             async with self._session.post(url, headers=headers) as resp:
                 if resp.status in (401, 403):
@@ -58,7 +61,7 @@ class EndurainApiClient:
                 resp.raise_for_status()
                 body = await resp.json()
                 self._access_token = body["access_token"]
-                self._refresh_token = body.get("refresh_token", self._refresh_token)
+                self._csrf_token = body.get("csrf_token", self._csrf_token)
         except aiohttp.ClientConnectionError as err:
             raise EndurainConnectionError(str(err)) from err
 
