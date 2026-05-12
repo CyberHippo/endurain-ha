@@ -8,7 +8,7 @@ import aiohttp
 _LOGGER = logging.getLogger(__name__)
 
 API_PATH = "/api/v1"
-# Web client: login returns access_token + refresh_token in body directly (no PKCE exchange needed)
+# Web client: login returns access_token directly in the response body (no PKCE exchange needed)
 CLIENT_TYPE_HEADER = {"X-Client-Type": "web"}
 
 
@@ -25,7 +25,8 @@ class EndurainApiClient:
         self._base = url.rstrip("/") + API_PATH
         self._session = session
         self._access_token: str | None = None
-        self._refresh_token: str | None = None
+        self._csrf_token: str | None = None
+        self._user_id: int | None = None
 
     # ------------------------------------------------------------------
     # Auth
@@ -42,9 +43,7 @@ class EndurainApiClient:
                     raise EndurainAuthError("Invalid credentials")
                 resp.raise_for_status()
                 body = await resp.json()
-                # Web login returns access_token directly; refresh token is in a cookie
                 self._access_token = body["access_token"]
-                # Store CSRF token for refresh calls if present
                 self._csrf_token = body.get("csrf_token")
         except aiohttp.ClientConnectionError as err:
             raise EndurainConnectionError(str(err)) from err
@@ -69,17 +68,15 @@ class EndurainApiClient:
     # Internal request helper
     # ------------------------------------------------------------------
 
-    async def _get(self, path: str, params: dict | None = None) -> Any:
+    async def _get(self, path: str) -> Any:
         url = f"{self._base}{path}"
         headers = {**CLIENT_TYPE_HEADER, "Authorization": f"Bearer {self._access_token}"}
         try:
-            async with self._session.get(url, headers=headers, params=params) as resp:
+            async with self._session.get(url, headers=headers) as resp:
                 if resp.status == 401:
                     await self._refresh()
                     headers["Authorization"] = f"Bearer {self._access_token}"
-                    async with self._session.get(
-                        url, headers=headers, params=params
-                    ) as retry:
+                    async with self._session.get(url, headers=headers) as retry:
                         retry.raise_for_status()
                         return await retry.json()
                 resp.raise_for_status()
@@ -92,30 +89,34 @@ class EndurainApiClient:
     # ------------------------------------------------------------------
 
     async def get_user_me(self) -> dict:
-        return await self._get("/users/me")
+        user = await self._get("/profile")
+        self._user_id = user["id"]
+        return user
 
     async def get_last_activity(self) -> dict | None:
-        data = await self._get("/activities/", params={"page_num": 1, "num_records": 1})
-        records = data.get("records") or []
+        data = await self._get(
+            f"/activities/user/{self._user_id}/page_number/1/num_records/1"
+        )
+        records = data if isinstance(data, list) else (data.get("records") or [])
         return records[0] if records else None
 
-    async def get_weekly_distances(self) -> dict:
-        return await self._get("/activities/distances/weekly")
+    async def get_weekly_distances(self) -> dict | None:
+        return await self._get(f"/activities/user/{self._user_id}/thisweek/distances")
 
-    async def get_monthly_distances(self) -> dict:
-        return await self._get("/activities/distances/monthly")
+    async def get_monthly_distances(self) -> dict | None:
+        return await self._get(f"/activities/user/{self._user_id}/thismonth/distances")
 
     async def get_latest_weight(self) -> dict | None:
-        data = await self._get("/health/weight/", params={"page_num": 1, "num_records": 1})
+        data = await self._get("/health/weight/page_number/1/num_records/1")
         records = data.get("records") or []
         return records[0] if records else None
 
     async def get_latest_steps(self) -> dict | None:
-        data = await self._get("/health/steps/", params={"page_num": 1, "num_records": 1})
+        data = await self._get("/health/steps/page_number/1/num_records/1")
         records = data.get("records") or []
         return records[0] if records else None
 
     async def get_latest_sleep(self) -> dict | None:
-        data = await self._get("/health/sleep/", params={"page_num": 1, "num_records": 1})
+        data = await self._get("/health/sleep/page_number/1/num_records/1")
         records = data.get("records") or []
         return records[0] if records else None
