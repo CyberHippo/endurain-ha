@@ -27,45 +27,40 @@ class EndurainCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            (
-                user,
-                last_activity,
-                weekly,
-                monthly,
-                weight,
-                steps,
-                sleep,
-            ) = await asyncio.gather(
-                self.client.get_user_me(),
-                self.client.get_last_activity(),
-                self.client.get_weekly_distances(),
-                self.client.get_monthly_distances(),
-                self.client.get_latest_weight(),
-                self.client.get_latest_steps(),
-                self.client.get_latest_sleep(),
-                return_exceptions=True,
-            )
+            # user must be fetched first — it populates _user_id used by all other calls
+            user = await self.client.get_user_me()
         except EndurainAuthError as err:
             raise ConfigEntryAuthFailed from err
         except EndurainConnectionError as err:
             raise UpdateFailed(f"Cannot connect to Endurain: {err}") from err
 
-        def _unwrap(result: Any, name: str) -> Any:
+        results = await asyncio.gather(
+            self.client.get_last_activity(),
+            self.client.get_weekly_distances(),
+            self.client.get_monthly_distances(),
+            self.client.get_latest_weight(),
+            self.client.get_latest_steps(),
+            self.client.get_latest_sleep(),
+            return_exceptions=True,
+        )
+
+        keys = (
+            "last_activity",
+            "weekly_distances",
+            "monthly_distances",
+            "latest_weight",
+            "latest_steps",
+            "latest_sleep",
+        )
+
+        data: dict[str, Any] = {"user": user}
+        for key, result in zip(keys, results):
             if isinstance(result, EndurainAuthError):
                 raise ConfigEntryAuthFailed from result
             if isinstance(result, Exception):
-                _LOGGER.warning("Failed to fetch %s: %s", name, result)
-                return None
-            return result
+                _LOGGER.warning("Failed to fetch %s: %s", key, result)
+                data[key] = None
+            else:
+                data[key] = result
 
-        return {
-            "user": _unwrap(user, "user"),
-            "last_activity": _unwrap(last_activity, "last_activity"),
-            "weekly_distances": _unwrap(weekly, "weekly_distances"),
-            "monthly_distances": _unwrap(monthly, "monthly_distances"),
-            "latest_weight": _unwrap(weight, "latest_weight"),
-            "latest_steps": _unwrap(steps, "latest_steps"),
-            "latest_sleep": _unwrap(sleep, "latest_sleep"),
-        }
-
-
+        return data
