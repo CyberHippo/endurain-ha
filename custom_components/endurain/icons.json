@@ -1,0 +1,27 @@
+{
+  "entity": {
+    "sensor": {
+      "last_activity_name": { "default": "mdi:run" },
+      "last_activity_type": { "default": "mdi:run-fast" },
+      "last_activity_distance": { "default": "mdi:map-marker-distance" },
+      "last_activity_duration": { "default": "mdi:timer-outline" },
+      "last_activity_avg_hr": { "default": "mdi:heart-pulse" },
+      "last_activity_avg_speed": { "default": "mdi:speedometer" },
+      "last_activity_elevation_gain": { "default": "mdi:elevation-rise" },
+      "last_activity_calories": { "default": "mdi:fire" },
+      "weekly_run_distance": { "default": "mdi:run" },
+      "weekly_bike_distance": { "default": "mdi:bike" },
+      "weekly_swim_distance": { "default": "mdi:swim" },
+      "monthly_run_distance": { "default": "mdi:run" },
+      "monthly_bike_distance": { "default": "mdi:bike" },
+      "monthly_swim_distance": { "default": "mdi:swim" },
+      "weight": { "default": "mdi:scale-bathroom" },
+      "body_fat": { "default": "mdi:human" },
+      "muscle_mass": { "default": "mdi:arm-flex" },
+      "steps": { "default": "mdi:shoe-print" },
+      "sleep_total": { "default": "mdi:sleep" },
+      "sleep_score": { "default": "mdi:star-circle-outline" },
+      "resting_heart_rate": { "default": "mdi:heart-pulse" }
+    }
+  }
+}

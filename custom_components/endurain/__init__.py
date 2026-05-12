@@ -5,6 +5,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import EndurainApiClient, EndurainAuthError, EndurainConnectionError
@@ -13,7 +14,7 @@ from .coordinator import EndurainCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 type EndurainConfigEntry = ConfigEntry[EndurainCoordinator]
 
@@ -22,7 +23,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: EndurainConfigEntry) -> 
     session = async_get_clientsession(hass)
     client = EndurainApiClient(entry.data[CONF_URL], session)
 
-    await client.authenticate(entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD])
+    try:
+        await client.authenticate(entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD])
+    except EndurainAuthError as err:
+        raise ConfigEntryAuthFailed(err) from err
+    except EndurainConnectionError as err:
+        raise ConfigEntryNotReady(err) from err
 
     coordinator = EndurainCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()

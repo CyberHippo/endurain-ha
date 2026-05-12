@@ -62,14 +62,12 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_name",
         translation_key="last_activity_name",
-        icon="mdi:run",
         value_fn=lambda d: _last_activity(d) and _last_activity(d).get("name"),
         available_fn=lambda d: _last_activity(d) is not None,
     ),
     EndurainSensorEntityDescription(
         key="last_activity_type",
         translation_key="last_activity_type",
-        icon="mdi:run-fast",
         value_fn=lambda d: ACTIVITY_TYPE_MAP.get(
             (_last_activity(d) or {}).get("activity_type"), "Unknown"
         )
@@ -80,7 +78,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_distance",
         translation_key="last_activity_distance",
-        icon="mdi:map-marker-distance",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -90,7 +87,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_duration",
         translation_key="last_activity_duration",
-        icon="mdi:timer-outline",
         native_unit_of_measurement=UnitOfTime.SECONDS,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
@@ -100,7 +96,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_avg_hr",
         translation_key="last_activity_avg_hr",
-        icon="mdi:heart-pulse",
         native_unit_of_measurement="bpm",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_last_activity(d) or {}).get("average_hr"),
@@ -109,7 +104,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_avg_speed",
         translation_key="last_activity_avg_speed",
-        icon="mdi:speedometer",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=SensorDeviceClass.SPEED,
         state_class=SensorStateClass.MEASUREMENT,
@@ -119,7 +113,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_elevation_gain",
         translation_key="last_activity_elevation_gain",
-        icon="mdi:elevation-rise",
         native_unit_of_measurement=UnitOfLength.METERS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_last_activity(d) or {}).get("elevation_gain"),
@@ -128,7 +121,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="last_activity_calories",
         translation_key="last_activity_calories",
-        icon="mdi:fire",
         native_unit_of_measurement="kcal",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_last_activity(d) or {}).get("calories"),
@@ -138,7 +130,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="weekly_run_distance",
         translation_key="weekly_run_distance",
-        icon="mdi:run",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -148,7 +139,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="weekly_bike_distance",
         translation_key="weekly_bike_distance",
-        icon="mdi:bike",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -158,7 +148,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="weekly_swim_distance",
         translation_key="weekly_swim_distance",
-        icon="mdi:swim",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -169,7 +158,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="monthly_run_distance",
         translation_key="monthly_run_distance",
-        icon="mdi:run",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -179,7 +167,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="monthly_bike_distance",
         translation_key="monthly_bike_distance",
-        icon="mdi:bike",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -189,7 +176,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="monthly_swim_distance",
         translation_key="monthly_swim_distance",
-        icon="mdi:swim",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -200,7 +186,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="weight",
         translation_key="weight",
-        icon="mdi:scale-bathroom",
         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
         device_class=SensorDeviceClass.WEIGHT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -210,7 +195,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="body_fat",
         translation_key="body_fat",
-        icon="mdi:human",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_weight(d) or {}).get("body_fat"),
@@ -219,7 +203,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="muscle_mass",
         translation_key="muscle_mass",
-        icon="mdi:arm-flex",
         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_weight(d) or {}).get("muscle_mass"),
@@ -229,7 +212,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="steps",
         translation_key="steps",
-        icon="mdi:shoe-print",
         native_unit_of_measurement="steps",
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda d: (_steps(d) or {}).get("steps"),
@@ -239,7 +221,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="sleep_total",
         translation_key="sleep_total",
-        icon="mdi:sleep",
         native_unit_of_measurement=UnitOfTime.SECONDS,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
@@ -249,7 +230,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="sleep_score",
         translation_key="sleep_score",
-        icon="mdi:star-circle-outline",
         native_unit_of_measurement="score",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_sleep(d) or {}).get("sleep_score_overall"),
@@ -258,7 +238,6 @@ SENSOR_DESCRIPTIONS: tuple[EndurainSensorEntityDescription, ...] = (
     EndurainSensorEntityDescription(
         key="resting_heart_rate",
         translation_key="resting_heart_rate",
-        icon="mdi:heart-pulse",
         native_unit_of_measurement="bpm",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: (_sleep(d) or {}).get("resting_heart_rate"),
